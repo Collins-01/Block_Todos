@@ -76,6 +76,8 @@ class TodosRepositoryImple {
 
     print(await _web3client
         ?.call(contract: _contract!, function: _taskCount!, params: []));
+    // print(await _web3client
+    //     ?.call(contract: _contract!, function: _todos!, params: []));
   }
 }
 
