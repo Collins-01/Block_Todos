@@ -91,7 +91,10 @@ class TodosRepositoryImple {
             BigInt.from(i),
           ],
         );
-        print(temp);
+        if (temp != null) {
+          _todosList.add(Task(taskName: temp[0], isCompleted: temp[1]));
+          print(_todosList[0].taskName);
+        }
       }
     }
     _todosList.clear();
