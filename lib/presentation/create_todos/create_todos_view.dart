@@ -38,7 +38,7 @@ class CreateTodosView extends ConsumerWidget {
                   padding: const EdgeInsets.only(right: 16),
                   child: InkWell(
                     onTap: () {
-                      ref.read(todosRepositoryImple).getAbi();
+                      ref.read(todosRepositoryImple).initiateSetUp();
                     },
                     child: Container(
                       alignment: Alignment.center,
