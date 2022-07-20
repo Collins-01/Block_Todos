@@ -73,11 +73,17 @@ class TodosRepositoryImple {
     _todos = _contract?.function('todos');
     _taskCreatedEvent = _contract?.event('TaskCreated');
     // _todos
+    getTodos();
+  }
 
-    print(await _web3client
-        ?.call(contract: _contract!, function: _taskCount!, params: []));
-    // print(await _web3client
-    //     ?.call(contract: _contract!, function: _todos!, params: []));
+  getTodos() async {
+    var dynamicList = await _web3client
+        ?.call(contract: _contract!, function: _taskCount!, params: []);
+    List<int> totaltaskList = [];
+    if (dynamicList != null) {
+      totaltaskList = dynamicList.map((e) => int.parse(e.toString())).toList();
+      for (int i = 0; i < totaltaskList.length; i++) {}
+    }
   }
 }
 

@@ -7,7 +7,7 @@ contract BlockTodos{
         string taskName;
         bool isCompleted;
     }
-    mapping(uint => Task) public todos;
+    mapping(uint256 => Task) public todos;
 
     event TaskCreated(string task, uint taskNumber );
     constructor ()  {
