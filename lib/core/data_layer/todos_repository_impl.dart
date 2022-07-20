@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:block_todos/core/core_constants.dart';
+import 'package:block_todos/core/models/task_model.dart';
 // import 'package:block_todos/core/data_layer/data_layer_mixins/todos_repo_imple_mixin.dart';
 // import 'package:block_todos/core/models/task_model.dart';
 // import 'package:block_todos/core/repositories/todos_repository.dart';
@@ -14,11 +15,12 @@ import 'package:web_socket_channel/io.dart';
 
 class TodosRepositoryImple {
   /// Constructor
-  TodosRepositoryImple() {
-    print("Constructore Callled");
-    initiateSetUp();
-  }
-  // List<Task> _todos = [];
+  // TodosRepositoryImple() {
+  //   print("Constructore Callled");
+  //   initiateSetUp();
+  // }
+  List<Task> _todosList = [];
+  List<Task> get todosList => _todosList;
   //================= Variables =================
   Web3Client? _web3client;
   late Credentials _credentials;
@@ -77,13 +79,22 @@ class TodosRepositoryImple {
   }
 
   getTodos() async {
-    var dynamicList = await _web3client
+    var totalTaskList = await _web3client
         ?.call(contract: _contract!, function: _taskCount!, params: []);
-    List<int> totaltaskList = [];
-    if (dynamicList != null) {
-      totaltaskList = dynamicList.map((e) => int.parse(e.toString())).toList();
-      for (int i = 0; i < totaltaskList.length; i++) {}
+    if (totalTaskList != null) {
+      BigInt totalTasks = totalTaskList[0];
+      for (var i = 0; i < totalTasks.toInt(); i++) {
+        var temp = await _web3client?.call(
+          contract: _contract!,
+          function: _todos!,
+          params: [
+            BigInt.from(i),
+          ],
+        );
+        print(temp);
+      }
     }
+    _todosList.clear();
   }
 }
 
