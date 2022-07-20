@@ -1,33 +1,28 @@
-import 'dart:convert';
-import 'dart:developer';
+import 'dart:async';
 
 import 'package:block_todos/core/core_constants.dart';
+import 'package:block_todos/core/data_layer/data_layer_mixins/todos_repo_imple_mixin.dart';
+import 'package:block_todos/core/errors/failure.dart';
 import 'package:block_todos/core/models/task_model.dart';
-// import 'package:block_todos/core/data_layer/data_layer_mixins/todos_repo_imple_mixin.dart';
-// import 'package:block_todos/core/models/task_model.dart';
-// import 'package:block_todos/core/repositories/todos_repository.dart';
-// import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:block_todos/core/repositories/todos_repository.dart';
+import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
 
-class TodosRepositoryImple {
-  /// Constructor
-  // TodosRepositoryImple() {
-  //   print("Constructore Callled");
-  //   initiateSetUp();
-  // }
-  List<Task> _todosList = [];
-  List<Task> get todosList => _todosList;
+class TodosRepositoryImple extends TodosRepository
+    with ChangeNotifier, TodosRepositoryImpleMixin {
   //================= Variables =================
   Web3Client? _web3client;
+  final List<Task> _todosList = [];
+  final _streamController = StreamController<List<Task>>.broadcast();
   late Credentials _credentials;
-  String _address = '';
+  final String _address = '';
 
   bool get _socketExists => _web3client != null;
-  // @override
+  @override
   bool get socketExists => _socketExists;
 
   EthereumAddress? _contractAddress;
@@ -41,35 +36,30 @@ class TodosRepositoryImple {
 
   // ===================Methods=============
   Future<void> initiateSetUp() async {
-    _web3client =
-        Web3Client(CoreConstants.rpcURL, Client(), socketConnector: () {
-      return IOWebSocketChannel.connect(CoreConstants.wsURL).cast<String>();
-    });
-    await getAbi();
-    await getCredentials();
-    await getDeployedContarct();
-  }
-
-  Future<void> getAbi() async {
-    String abiFileString =
-        await rootBundle.loadString('src/abis/BlockTodos.json');
-    final decoded = jsonDecode(abiFileString) as Map<String, dynamic>;
-    _abiCode = jsonEncode(decoded['abi']);
-    final hex = decoded['networks']['5777']['address'];
-    _address = hex;
-    _contractAddress = EthereumAddress.fromHex(hex);
-    print(_contractAddress);
-  }
-
-  Future<void> getCredentials() async {
-    _credentials = EthPrivateKey.fromHex(_address);
-    _ownAddress = await _credentials.extractAddress();
+    try {
+      _web3client =
+          Web3Client(CoreConstants.rpcURL, Client(), socketConnector: () {
+        return IOWebSocketChannel.connect(CoreConstants.wsURL).cast<String>();
+      });
+      await getAbi(
+        abiCode: _abiCode,
+        address: _address,
+        contractAddress: _contractAddress,
+      );
+      await getCredentials(
+        address: _address,
+        credentials: _credentials,
+        ownAddress: _ownAddress,
+      );
+      await getDeployedContarct();
+    } on Failure {
+      rethrow;
+    }
   }
 
   Future<void> getDeployedContarct() async {
     _contract = DeployedContract(
         ContractAbi.fromJson(_abiCode, "BlockTodos"), _contractAddress!);
-
     _taskCount = _contract?.function('taskCount');
     _createTask = _contract?.function('createTask');
     _todos = _contract?.function('todos');
@@ -92,12 +82,26 @@ class TodosRepositoryImple {
           ],
         );
         if (temp != null) {
-          _todosList.add(Task(taskName: temp[0], isCompleted: temp[1]));
+          Task task = Task(taskName: temp[0], isCompleted: temp[1]);
+          _todosList.add(task);
+          notifyListeners();
           print(_todosList[0].taskName);
         }
       }
     }
     _todosList.clear();
+  }
+
+  @override
+  Stream<List<Task>> get streamTodoList => _streamController.stream;
+
+  @override
+  List<Task> get taskList => _todosList;
+
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
   }
 }
 
