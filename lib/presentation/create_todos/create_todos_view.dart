@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CreateTodosView extends StatelessWidget {
+import '../../core/data_layer/todos_repository_impl.dart';
+
+class CreateTodosView extends ConsumerWidget {
   const CreateTodosView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Bloc Todos"),
@@ -14,7 +17,10 @@ class CreateTodosView extends StatelessWidget {
           Expanded(
             flex: 4,
             child: ListView.separated(
-              itemBuilder: (_, index) => const Text("Hello"),
+              itemBuilder: (_, index) => const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text("Hello"),
+              ),
               separatorBuilder: (context, index) => const Divider(),
               itemCount: 30,
             ),
@@ -31,7 +37,9 @@ class CreateTodosView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 16),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      ref.read(todosRepositoryImple).getAbi();
+                    },
                     child: Container(
                       alignment: Alignment.center,
                       height: 40,
