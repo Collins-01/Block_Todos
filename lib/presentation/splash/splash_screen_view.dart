@@ -3,7 +3,7 @@ import 'package:block_todos/presentation/splash/viewmodels/splash_screen_viewmod
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final _splashVM = ChangeNotifierProvider((ref) => SpalshScreenViewModel(ref));
+final _splashVM = Provider((ref) => SpalshScreenViewModel(ref));
 
 class SplashScreenView extends ConsumerStatefulWidget {
   const SplashScreenView({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class _SplashScreenViewState extends ConsumerState<SplashScreenView> {
   @override
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      ref.read(_splashVM).onModelReady();
+      ref.read(_splashVM).onModelReady(context);
     });
     super.initState();
   }
