@@ -11,7 +11,7 @@ class SpalshScreenViewModel extends BaseViewModel {
   onModelReady(BuildContext context) async {
     try {
       setViewState(const ViewState.busy());
-      ref.read(todosRepositoryImple).initiateSetUp();
+      // ref.read(todosRepositoryImple).initiateSetUp();
       setViewState(const ViewState.idle());
       // print(ref.read(todosRepositoryImple).taskList);
       Future.delayed(const Duration(milliseconds: 300));

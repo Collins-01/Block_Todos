@@ -1,7 +1,7 @@
+import 'package:bloc/bloc.dart';
 import 'package:block_todos/core/data_layer/todos_repository_impl.dart';
 import 'package:block_todos/presentation/splash/bloc/bloc.dart';
 import 'package:block_todos/presentation/splash/bloc/splash_screen_events.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SplashScreenBloc extends Bloc<SplashScreenEvents, SplashScreenState> {
   final TodosRepositoryImple _todosRepositoryImple;
@@ -21,6 +21,7 @@ class SplashScreenBloc extends Bloc<SplashScreenEvents, SplashScreenState> {
       await _todosRepositoryImple.initiateSetUp();
       state.copyWith(status: SplashScreenStatus.isSuccess);
     } catch (e) {
+      print("Errror ::: $e");
       emit(
         state.copyWith(
           status: SplashScreenStatus.isError,

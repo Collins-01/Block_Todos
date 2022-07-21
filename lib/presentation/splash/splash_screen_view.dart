@@ -13,59 +13,91 @@ class SplashScreenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SplashScreenBloc(
-        todosRepositoryImple: context.read<TodosRepositoryImple>(),
+        todosRepositoryImple: TodosRepositoryImple(),
       )..add(
           const InitialiseEvent(),
         ),
-      child: const SplashScreenView(),
+      child: const _SplashScreenView(),
     );
   }
 }
 
-class SplashScreenView extends StatelessWidget {
-  const SplashScreenView({Key? key}) : super(key: key);
+class _SplashScreenView extends StatelessWidget {
+  const _SplashScreenView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.,
-      body: BlocConsumer<SplashScreenBloc, SplashScreenState>(
-        builder: (context, state) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("BLOCK 🧊 - TODOS 🖋 "),
-              const Spacer(),
-              state.status.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    )
-                  : const SizedBox.shrink(),
-              const SizedBox(
-                height: 30,
-              )
-            ],
-          );
-        },
-        listener: (context, state) {
-          if (state.status.isSuccess) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => const CreateTodoPage(),
-              ),
-            );
-          }
-          if (state.status.isError) {
-            ScaffoldMessenger.of(context)
+        body: BlocListener<SplashScreenBloc, SplashScreenState>(
+      listenWhen: (previous, current) =>
+          previous.status != current.status &&
+          current.status == SplashScreenStatus.isSuccess,
+      listener: (context, state) {
+        // print(state.status);
+      },
+      bloc: SplashScreenBloc(todosRepositoryImple: TodosRepositoryImple()),
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(),
+            const Center(child: Text("BLOCK 🧊 - TODOS 🖋 ")),
+            const Spacer(),
+            BlocBuilder<SplashScreenBloc, SplashScreenState>(
+              bloc: SplashScreenBloc(
+                  todosRepositoryImple: TodosRepositoryImple()),
+              builder: (context, state) {
+                if (state.status.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            const SizedBox(
+              height: 30,
+            )
+          ],
+        ),
+      ),
+    ));
+  }
+}
+/*
+error.
+  ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
                 SnackBar(
                   content: Text(state.errorMessage),
                 ),
               );
-          }
-        },
-      ),
-    );
-  }
-}
+
+navigate
+ Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => const CreateTodoPage(),
+              ),
+            );
+
+/
+ SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                const Center(child: Text("BLOCK 🧊 - TODOS 🖋 ")),
+                const Spacer(),
+                state.status.isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : const SizedBox.shrink(),
+                const SizedBox(
+                  height: 30,
+                )
+              ],
+            ),
+          );
+*/

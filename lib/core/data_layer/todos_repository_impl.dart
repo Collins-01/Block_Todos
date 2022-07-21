@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'package:block_todos/core/core_constants.dart';
-import 'package:block_todos/core/errors/failure.dart';
 import 'package:block_todos/core/models/task_model.dart';
 import 'package:block_todos/core/repositories/todos_repository.dart';
-
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
@@ -41,8 +38,9 @@ class TodosRepositoryImple extends TodosRepository {
       await _getAbi();
       await _getCredentials();
       await _getDeployedContarct();
-    } on Failure {
-      rethrow;
+    } catch (e) {
+      print("Error Initialising :::: $e");
+      // rethrow;
     }
   }
 
@@ -54,11 +52,13 @@ class TodosRepositoryImple extends TodosRepository {
     final hex = decoded['networks']['5777']['address'];
     _address = hex;
     _contractAddress = EthereumAddress.fromHex(hex);
+    // print(_address);
   }
 
   Future<void> _getCredentials() async {
     _credentials = EthPrivateKey.fromHex(_address);
     _ownAddress = await _credentials.extractAddress();
+    // print(_ownAddress?.hex);
   }
 
   Future<void> _getDeployedContarct() async {
@@ -87,6 +87,7 @@ class TodosRepositoryImple extends TodosRepository {
           ],
         );
         if (temp != null) {
+          // print(temp.toString());
           final prevTodos = [..._streamController.value];
           Task task = Task(taskName: temp[0], isCompleted: temp[1]);
           prevTodos.add(task);
@@ -95,7 +96,8 @@ class TodosRepositoryImple extends TodosRepository {
         }
       }
     }
-    _todosList.clear();
+    // print(_streamController.value.toString());
+    // _todosList.clear();
   }
 
   @override
@@ -172,6 +174,3 @@ class TodosRepositoryImple extends TodosRepository {
     }
   }
 }
-
-final todosRepositoryImple =
-    Provider<TodosRepository>((ref) => TodosRepositoryImple());
