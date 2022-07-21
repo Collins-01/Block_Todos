@@ -7,15 +7,16 @@ class CreateTodoEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FetchingTasksEvent extends CreateTodoEvent {
-  const FetchingTasksEvent();
+class FetchAllTaskEvent extends CreateTodoEvent {
+  const FetchAllTaskEvent();
   @override
   List<Object?> get props => [];
 }
 
 class ToggleCompletedTodoEvent extends CreateTodoEvent {
   final bool isCompleted;
-  const ToggleCompletedTodoEvent(this.isCompleted);
+  final int index;
+  const ToggleCompletedTodoEvent(this.index, this.isCompleted);
   @override
   List<Object?> get props => [isCompleted];
 }

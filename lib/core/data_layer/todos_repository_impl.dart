@@ -71,6 +71,7 @@ class TodosRepositoryImple extends TodosRepository {
     _getTodos();
   }
 
+  /// Fetches the List of Tasks from the Blockchain
   _getTodos() async {
     var totalTaskList = await _web3client
         ?.call(contract: _contract!, function: _taskCount!, params: []);
@@ -118,6 +119,7 @@ class TodosRepositoryImple extends TodosRepository {
       );
       _getTodos();
     } catch (e) {
+      rethrow;
       // print("Error Creating :  $e");
       // throw Exception();
     }
@@ -134,6 +136,39 @@ class TodosRepositoryImple extends TodosRepository {
       _streamController.add(list);
     } catch (e) {
       print(e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> getAllTasks() async {
+    try {
+      var totalTaskList = await _web3client
+          ?.call(contract: _contract!, function: _taskCount!, params: []);
+      if (totalTaskList != null) {
+        BigInt totalTasks = totalTaskList[0];
+        for (var i = 0; i < totalTasks.toInt(); i++) {
+          var temp = await _web3client?.call(
+            contract: _contract!,
+            function: _todos!,
+            params: [
+              /// we communicate with e blockchain with BigInts, becuase we specify our data types as [uint256]
+              BigInt.from(i),
+            ],
+          );
+          if (temp != null) {
+            final prevTodos = [..._streamController.value];
+            Task task = Task(taskName: temp[0], isCompleted: temp[1]);
+            prevTodos.add(task);
+            _todosList.add(task);
+            _streamController.add(prevTodos);
+          }
+        }
+      }
+      _todosList.clear();
+    } catch (e) {
+      print("Error Loading Todos :::: $e");
+      rethrow;
     }
   }
 }

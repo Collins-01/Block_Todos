@@ -16,7 +16,7 @@ class SpalshScreenViewModel extends BaseViewModel {
       // print(ref.read(todosRepositoryImple).taskList);
       Future.delayed(const Duration(milliseconds: 300));
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const CreateTodosView()));
+          MaterialPageRoute(builder: (_) => CreateTodosView()));
     } catch (e) {
       // ignore: avoid_print
       print(e.toString());

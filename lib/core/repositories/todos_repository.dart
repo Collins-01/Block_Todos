@@ -15,4 +15,7 @@ abstract class TodosRepository {
 
   /// Changes the State of a Particular task, takes in [index: int] and [isCompleted: bool]
   Future<void> toggleTodo(int index, bool isComplete);
+
+  /// Function To get all the Tasks from teh Blockchain
+  Future<void> getAllTasks();
 }

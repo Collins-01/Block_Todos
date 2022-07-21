@@ -1,62 +1,71 @@
-import 'package:block_todos/presentation/splash/viewmodels/splash_screen_viewmodel.dart';
-
+import 'package:block_todos/core/data_layer/todos_repository_impl.dart';
+import 'package:block_todos/presentation/create_todos/create_todos_view.dart';
+import 'package:block_todos/presentation/splash/bloc/bloc.dart';
+import 'package:block_todos/presentation/splash/bloc/splash_screen_bloc.dart';
+import 'package:block_todos/presentation/splash/bloc/splash_screen_events.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-final _splashVM = Provider((ref) => SpalshScreenViewModel(ref));
-
-class SplashScreenView extends ConsumerStatefulWidget {
-  const SplashScreenView({Key? key}) : super(key: key);
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _SplashScreenViewState();
-}
-
-class _SplashScreenViewState extends ConsumerState<SplashScreenView> {
-  @override
-  void initState() {
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      ref.read(_splashVM).onModelReady(context);
-    });
-    super.initState();
-  }
+class SplashScreenPage extends StatelessWidget {
+  const SplashScreenPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var model = ref.watch(_splashVM);
+    return BlocProvider(
+      create: (context) => SplashScreenBloc(
+        todosRepositoryImple: context.read<TodosRepositoryImple>(),
+      )..add(
+          const InitialiseEvent(),
+        ),
+      child: const SplashScreenView(),
+    );
+  }
+}
+
+class SplashScreenView extends StatelessWidget {
+  const SplashScreenView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
-      body: model.viewState.when(
-          idle: () => Stack(
-                alignment: Alignment.center,
-                children: const [
-                  Text("Block -> Todos"),
-                  // Positioned(
-                  //   bottom: 20,
-                  //   left: 0,
-                  //   right: 0,
-                  //   child: CircularProgressIndicator.adaptive(),
-                  // )
-                ],
+      // backgroundColor: Colors.,
+      body: BlocConsumer<SplashScreenBloc, SplashScreenState>(
+        builder: (context, state) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("BLOCK 🧊 - TODOS 🖋 "),
+              const Spacer(),
+              state.status.isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    )
+                  : const SizedBox.shrink(),
+              const SizedBox(
+                height: 30,
+              )
+            ],
+          );
+        },
+        listener: (context, state) {
+          if (state.status.isSuccess) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => const CreateTodoPage(),
               ),
-          busy: () {
-            return Stack(
-              alignment: Alignment.center,
-              children: const [
-                Text("Block -> Todos"),
-                Positioned(
-                  bottom: 20,
-                  left: 0,
-                  right: 0,
-                  child: CircularProgressIndicator.adaptive(),
-                )
-              ],
             );
-          },
-          error: (e) {
-            return const SizedBox.shrink();
-          }),
+          }
+          if (state.status.isError) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage),
+                ),
+              );
+          }
+        },
+      ),
     );
   }
 }

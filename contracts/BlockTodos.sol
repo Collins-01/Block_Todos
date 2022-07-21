@@ -38,6 +38,7 @@ contract BlockTodos{
         
     }
      function toggleTask( uint256 index , bool  isCompleted) public {
+        
         //Check if the index exists in the array
         //if [Y] Edit the Task based on the index, then emit to the Client side.
         // if [N] throw an error
