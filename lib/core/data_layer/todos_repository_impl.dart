@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:block_todos/core/core_constants.dart';
-import 'package:block_todos/core/data_layer/data_layer_mixins/todos_repo_imple_mixin.dart';
 import 'package:block_todos/core/errors/failure.dart';
 import 'package:block_todos/core/models/task_model.dart';
 import 'package:block_todos/core/repositories/todos_repository.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,11 +20,13 @@ class TodosRepositoryImple extends TodosRepository {
   String _address = '';
 
   EthereumAddress? _contractAddress;
+  // ignore: unused_field
   EthereumAddress? _ownAddress;
   DeployedContract? _contract;
   ContractFunction? _taskCount;
   ContractFunction? _todos;
   ContractFunction? _createTask;
+  // ignore: unused_field
   ContractEvent? _taskCreatedEvent;
   late String _abiCode;
 
@@ -38,15 +38,15 @@ class TodosRepositoryImple extends TodosRepository {
           Web3Client(CoreConstants.rpcURL, Client(), socketConnector: () {
         return IOWebSocketChannel.connect(CoreConstants.wsURL).cast<String>();
       });
-      await getAbi();
-      await getCredentials();
+      await _getAbi();
+      await _getCredentials();
       await _getDeployedContarct();
     } on Failure {
       rethrow;
     }
   }
 
-  Future<void> getAbi() async {
+  Future<void> _getAbi() async {
     String abiFileString =
         await rootBundle.loadString('src/abis/BlockTodos.json');
     final decoded = jsonDecode(abiFileString) as Map<String, dynamic>;
@@ -56,7 +56,7 @@ class TodosRepositoryImple extends TodosRepository {
     _contractAddress = EthereumAddress.fromHex(hex);
   }
 
-  Future<void> getCredentials() async {
+  Future<void> _getCredentials() async {
     _credentials = EthPrivateKey.fromHex(_address);
     _ownAddress = await _credentials.extractAddress();
   }
@@ -81,13 +81,13 @@ class TodosRepositoryImple extends TodosRepository {
           contract: _contract!,
           function: _todos!,
           params: [
+            /// we communicate with e blockchain with BigInts, becuase we specify our data types as [uint256]
             BigInt.from(i),
           ],
         );
         if (temp != null) {
           final prevTodos = [..._streamController.value];
           Task task = Task(taskName: temp[0], isCompleted: temp[1]);
-          print(temp);
           prevTodos.add(task);
           _todosList.add(task);
           _streamController.add(prevTodos);
@@ -118,8 +118,22 @@ class TodosRepositoryImple extends TodosRepository {
       );
       _getTodos();
     } catch (e) {
-      print("Error Creating :  $e");
+      // print("Error Creating :  $e");
       // throw Exception();
+    }
+  }
+
+  @override
+  Future<void> toggleTodo(int index, bool isComplete) async {
+    try {
+      final list = [..._streamController.value];
+      final item = list[index];
+      final edited = Task(taskName: item.taskName, isCompleted: isComplete);
+      list.removeAt(index);
+      list.insert(index, edited);
+      _streamController.add(list);
+    } catch (e) {
+      print(e);
     }
   }
 }

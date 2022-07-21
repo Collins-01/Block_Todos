@@ -39,6 +39,8 @@ dependencies:
   web_socket_channel: ^2.2.0
   flutter_riverpod: ^1.0.3
   rxdart: ^0.27.5
+  equatable: ^2.0.3
+  flutter_bloc: ^8.0.1
 
 dev_dependencies:
   flutter_test:
