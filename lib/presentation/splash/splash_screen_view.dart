@@ -3,6 +3,7 @@ import 'package:block_todos/presentation/create_todos/create_todos_view.dart';
 import 'package:block_todos/presentation/splash/bloc/bloc.dart';
 import 'package:block_todos/presentation/splash/bloc/splash_screen_bloc.dart';
 import 'package:block_todos/presentation/splash/bloc/splash_screen_events.dart';
+import 'package:block_todos/utils/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,16 +15,46 @@ class SplashScreenPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => SplashScreenBloc(
         todosRepositoryImple: TodosRepositoryImple(),
-      )..add(
-          const InitialiseEvent(),
-        ),
+      ),
       child: const _SplashScreenView(),
     );
   }
 }
 
-class _SplashScreenView extends StatelessWidget {
+class _SplashScreenView extends StatefulWidget {
   const _SplashScreenView({Key? key}) : super(key: key);
+
+  @override
+  State<_SplashScreenView> createState() => _SplashScreenViewState();
+}
+
+class _SplashScreenViewState extends State<_SplashScreenView> {
+  @override
+  void initState() {
+    super.initState();
+    final _splashScreenBloc =
+        SplashScreenBloc(todosRepositoryImple: TodosRepositoryImple());
+    // _splashScreenBloc.add(const InitialiseEvent());
+    _init();
+  }
+
+  _init() async {
+    try {
+      Future.delayed(const Duration(milliseconds: 150));
+      await TodosRepositoryImple().initiateSetUp().then((value) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const CreateTodoPage()));
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

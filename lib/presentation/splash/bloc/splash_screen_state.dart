@@ -9,8 +9,6 @@ extension XSplashScreenStatus on SplashScreenStatus {
   bool get idle => this == SplashScreenStatus.idle;
 }
 
-extension XSPlashScreenState on SplashScreenState {}
-
 class SplashScreenState extends Equatable {
   const SplashScreenState({
     this.status = SplashScreenStatus.idle,
@@ -24,8 +22,10 @@ class SplashScreenState extends Equatable {
         errorMessage,
       ];
 
-  SplashScreenState copyWith(
-      {SplashScreenStatus? status, String? errorMessage}) {
+  SplashScreenState copyWith({
+    SplashScreenStatus? status,
+    String? errorMessage,
+  }) {
     return SplashScreenState(
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,

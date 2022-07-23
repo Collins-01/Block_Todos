@@ -3,6 +3,7 @@ import 'package:block_todos/core/data_layer/todos_repository_impl.dart';
 import 'package:block_todos/core/models/task_model.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_events.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_state.dart';
+import 'package:block_todos/utils/app_logger.dart';
 
 class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
   final TodosRepositoryImple _todosRepositoryImple;
@@ -56,12 +57,19 @@ class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
     try {
       emit(state.copyWith(status: TodoStatus.loading));
       //Call Get all Tasks
-      await _todosRepositoryImple.getAllTasks();
+      await _todosRepositoryImple.getAllTasks().then((value) {
+        _todosRepositoryImple.streamTodoList.listen((event) {
+          AppLogger.log(event);
+        });
+      });
+
       await emit.forEach<List<Task>>(
         _todosRepositoryImple.streamTodoList,
         onData: (tasks) => state.copyWith(
           status: TodoStatus.success,
-          taskList: () => tasks,
+          taskList: () {
+            return tasks;
+          },
         ),
         onError: (e, r) => emit(
           state.copyWith(

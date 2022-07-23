@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:block_todos/core/core_constants.dart';
 import 'package:block_todos/core/models/task_model.dart';
 import 'package:block_todos/core/repositories/todos_repository.dart';
+import 'package:block_todos/utils/app_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart';
@@ -88,16 +89,14 @@ class TodosRepositoryImple extends TodosRepository {
         );
         if (temp != null) {
           // print(temp.toString());
-          final prevTodos = [..._streamController.value];
+          List<Task> prevTodos = [];
           Task task = Task(taskName: temp[0], isCompleted: temp[1]);
           prevTodos.add(task);
-          _todosList.add(task);
           _streamController.add(prevTodos);
+          _todosList.add(task);
         }
       }
     }
-    // print(_streamController.value.toString());
-    // _todosList.clear();
   }
 
   @override

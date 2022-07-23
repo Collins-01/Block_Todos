@@ -1,6 +1,8 @@
+import 'package:block_todos/app.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_bloc.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_events.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_state.dart';
+import 'package:block_todos/utils/app_logger.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,19 +21,32 @@ class CreateTodoPage extends StatelessWidget {
         context,
       ) =>
           CreateTodosBloc(
-        todosRepositoryImple: context.read<TodosRepositoryImple>(),
-      )..add(const FetchAllTaskEvent()),
-      child: CreateTodosView(),
+        todosRepositoryImple: TodosRepositoryImple(),
+      ),
+      child: const CreateTodosView(),
     );
   }
 }
 
-class CreateTodosView extends ConsumerWidget {
-  CreateTodosView({Key? key}) : super(key: key);
-  final taskController = TextEditingController();
+class CreateTodosView extends StatefulWidget {
+  const CreateTodosView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ref) {
+  State<CreateTodosView> createState() => _CreateTodosViewState();
+}
+
+class _CreateTodosViewState extends State<CreateTodosView> {
+  final taskController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    final _createTodosBloc =
+        CreateTodosBloc(todosRepositoryImple: TodosRepositoryImple());
+    _createTodosBloc.add(const FetchAllTaskEvent());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Bloc Todos"),
@@ -83,9 +98,11 @@ class CreateTodosView extends ConsumerWidget {
                 }
                 return const BuildEmptyTodos();
               }
+
               return const BuildEmptyTodos();
             }),
             Expanded(
+              flex: 1,
               child: Row(
                 children: [
                   Expanded(
@@ -106,21 +123,12 @@ class CreateTodosView extends ConsumerWidget {
                     padding: const EdgeInsets.only(right: 16),
                     child: InkWell(
                       onTap: () {
-                        // model.createTask();
                         if (taskController.text.isNotEmpty) {
                           context.read<CreateTodosBloc>().add(
                                 CreateTaskTodoEvent(taskController.text),
                               );
                         }
-                        if (taskController.text.length < 5) {
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              const SnackBar(
-                                content: Text("Task should be 5+ chars!"),
-                              ),
-                            );
-                        }
+
                         ScaffoldMessenger.of(context)
                           ..hideCurrentSnackBar()
                           ..showSnackBar(
