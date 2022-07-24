@@ -88,7 +88,6 @@ class TodosRepositoryImple extends TodosRepository {
           ],
         );
         if (temp != null) {
-          // print(temp.toString());
           List<Task> prevTodos = [];
           Task task = Task(taskName: temp[0], isCompleted: temp[1]);
           prevTodos.add(task);
@@ -166,7 +165,6 @@ class TodosRepositoryImple extends TodosRepository {
           }
         }
       }
-      _todosList.clear();
     } catch (e) {
       print("Error Loading Todos :::: $e");
       rethrow;

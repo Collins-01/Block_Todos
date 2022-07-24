@@ -1,4 +1,5 @@
 import 'package:block_todos/core/data_layer/todos_repository_impl.dart';
+import 'package:block_todos/core/locator.dart';
 import 'package:block_todos/presentation/create_todos/create_todos_view.dart';
 import 'package:block_todos/presentation/splash/bloc/bloc.dart';
 import 'package:block_todos/presentation/splash/bloc/splash_screen_bloc.dart';
@@ -7,6 +8,8 @@ import 'package:block_todos/utils/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+final _todoRepositoryInstance = locator<TodosRepositoryImple>();
+
 class SplashScreenPage extends StatelessWidget {
   const SplashScreenPage({Key? key}) : super(key: key);
 
@@ -14,7 +17,7 @@ class SplashScreenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SplashScreenBloc(
-        todosRepositoryImple: TodosRepositoryImple(),
+        todosRepositoryImple: _todoRepositoryInstance,
       ),
       child: const _SplashScreenView(),
     );
@@ -32,16 +35,16 @@ class _SplashScreenViewState extends State<_SplashScreenView> {
   @override
   void initState() {
     super.initState();
-    final _splashScreenBloc =
-        SplashScreenBloc(todosRepositoryImple: TodosRepositoryImple());
-    // _splashScreenBloc.add(const InitialiseEvent());
+    // final _splashScreenBloc =
+    //     SplashScreenBloc(todosRepositoryImple: TodosRepositoryImple());
+
     _init();
   }
 
   _init() async {
     try {
-      Future.delayed(const Duration(milliseconds: 150));
-      await TodosRepositoryImple().initiateSetUp().then((value) {
+      Future.delayed(const Duration(milliseconds: 100));
+      await _todoRepositoryInstance.initiateSetUp().then((value) {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const CreateTodoPage()));
       });
@@ -66,7 +69,9 @@ class _SplashScreenViewState extends State<_SplashScreenView> {
       listener: (context, state) {
         // print(state.status);
       },
-      bloc: SplashScreenBloc(todosRepositoryImple: TodosRepositoryImple()),
+      bloc: SplashScreenBloc(
+        todosRepositoryImple: _todoRepositoryInstance,
+      ),
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +81,8 @@ class _SplashScreenViewState extends State<_SplashScreenView> {
             const Spacer(),
             BlocBuilder<SplashScreenBloc, SplashScreenState>(
               bloc: SplashScreenBloc(
-                  todosRepositoryImple: TodosRepositoryImple()),
+                todosRepositoryImple: _todoRepositoryInstance,
+              ),
               builder: (context, state) {
                 if (state.status.isLoading) {
                   return const Center(

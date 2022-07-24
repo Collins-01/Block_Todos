@@ -34,6 +34,8 @@ class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
     }
   }
 
+  Stream<List<Task>> get tasks => _tasks;
+  Stream<List<Task>> _tasks = Stream.empty();
   //Toggles the Status of a task
   Future<void> toggleTaskStatus(
       ToggleCompletedTodoEvent event, Emitter emit) async {
@@ -56,12 +58,8 @@ class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
   Future<void> getAllTasks(FetchAllTaskEvent event, Emitter emit) async {
     try {
       emit(state.copyWith(status: TodoStatus.loading));
-      //Call Get all Tasks
-      await _todosRepositoryImple.getAllTasks().then((value) {
-        _todosRepositoryImple.streamTodoList.listen((event) {
-          AppLogger.log(event);
-        });
-      });
+      // AppLogger.log("Fetchin Tasks : ${state.status}");
+      await _todosRepositoryImple.getAllTasks();
 
       await emit.forEach<List<Task>>(
         _todosRepositoryImple.streamTodoList,
