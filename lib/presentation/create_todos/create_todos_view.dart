@@ -12,7 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/data_layer/todos_repository_impl.dart';
 import 'components/components.dart';
 
-final _todoRepositoryInstance = locator<TodosRepositoryImple>();
+// final _todoRepositoryInstance = locator<TodosRepositoryImple>();
+final _todoRepositoryInstance = TodosRepositoryImple();
 
 class CreateTodoPage extends StatelessWidget {
   const CreateTodoPage({Key? key}) : super(key: key);

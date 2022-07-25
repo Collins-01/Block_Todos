@@ -27,25 +27,29 @@ class CreateTodoState extends Equatable {
   final TodoStatus status;
   final String errorMessage;
   final List<Task> taskList;
+  final Stream<List<Task>> streamtaskList;
   const CreateTodoState({
     this.status = TodoStatus.idle,
     this.errorMessage = '',
     this.taskList = const [],
+    this.streamtaskList = const Stream.empty(),
   });
 
   @override
   List<Object?> get props => [status];
 
 //Copy With method
-  CreateTodoState copyWith({
-    TodoStatus? status,
-    String? errorMessage,
-    List<Task> Function()? taskList,
-  }) {
+  CreateTodoState copyWith(
+      {TodoStatus? status,
+      String? errorMessage,
+      List<Task> Function()? taskList,
+      Stream<List<Task>> Function()? streamtaskList}) {
     return CreateTodoState(
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
       taskList: taskList != null ? taskList() : this.taskList,
+      streamtaskList:
+          streamtaskList != null ? streamtaskList() : this.streamtaskList,
     );
   }
 }

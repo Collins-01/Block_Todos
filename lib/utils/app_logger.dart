@@ -10,4 +10,5 @@ class AppLogger {
     );
     _logger.info(message);
   }
+  //
 }

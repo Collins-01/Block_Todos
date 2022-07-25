@@ -100,7 +100,7 @@ class TodosRepositoryImple extends TodosRepository {
 
   @override
   Stream<List<Task>> get streamTodoList =>
-      _streamController.stream.asBroadcastStream();
+      _streamController.asBroadcastStream();
 
   @override
   List<Task> get taskList => _todosList;
@@ -117,7 +117,6 @@ class TodosRepositoryImple extends TodosRepository {
           parameters: [task],
         ),
       );
-      _getTodos();
     } catch (e) {
       rethrow;
       // print("Error Creating :  $e");
@@ -142,32 +141,29 @@ class TodosRepositoryImple extends TodosRepository {
 
   @override
   Future<void> getAllTasks() async {
-    try {
-      var totalTaskList = await _web3client
-          ?.call(contract: _contract!, function: _taskCount!, params: []);
-      if (totalTaskList != null) {
-        BigInt totalTasks = totalTaskList[0];
-        for (var i = 0; i < totalTasks.toInt(); i++) {
-          var temp = await _web3client?.call(
-            contract: _contract!,
-            function: _todos!,
-            params: [
-              /// we communicate with e blockchain with BigInts, becuase we specify our data types as [uint256]
-              BigInt.from(i),
-            ],
-          );
-          if (temp != null) {
-            final prevTodos = [..._streamController.value];
-            Task task = Task(taskName: temp[0], isCompleted: temp[1]);
-            prevTodos.add(task);
-            _todosList.add(task);
-            _streamController.add(prevTodos);
-          }
+    var totalTaskList = await _web3client
+        ?.call(contract: _contract!, function: _taskCount!, params: []);
+    if (totalTaskList != null) {
+      BigInt totalTasks = totalTaskList[0];
+      for (var i = 0; i < totalTasks.toInt(); i++) {
+        var temp = await _web3client?.call(
+          contract: _contract!,
+          function: _todos!,
+          params: [
+            /// we communicate with e blockchain with BigInts, becuase we specify our data types as [uint256]
+            BigInt.from(i),
+          ],
+        );
+        if (temp != null) {
+          List<Task> prevTodos = [];
+          Task task = Task(taskName: temp[0], isCompleted: temp[1]);
+          prevTodos.add(task);
+          _streamController.add(prevTodos);
+          _todosList.add(task);
+          AppLogger.log(prevTodos);
+          AppLogger.log(_streamController.value);
         }
       }
-    } catch (e) {
-      print("Error Loading Todos :::: $e");
-      rethrow;
     }
   }
 }

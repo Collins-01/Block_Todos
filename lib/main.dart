@@ -3,7 +3,8 @@ import 'package:block_todos/core/locator.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
+
   await setUpLocator();
   bootstrap();
 }

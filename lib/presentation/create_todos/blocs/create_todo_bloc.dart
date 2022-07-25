@@ -35,7 +35,7 @@ class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
   }
 
   Stream<List<Task>> get tasks => _tasks;
-  Stream<List<Task>> _tasks = Stream.empty();
+  Stream<List<Task>> get _tasks => _todosRepositoryImple.streamTodoList;
   //Toggles the Status of a task
   Future<void> toggleTaskStatus(
       ToggleCompletedTodoEvent event, Emitter emit) async {
@@ -59,23 +59,24 @@ class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
     try {
       emit(state.copyWith(status: TodoStatus.loading));
       // AppLogger.log("Fetchin Tasks : ${state.status}");
-      await _todosRepositoryImple.getAllTasks();
+      // await _todosRepositoryImple.getAllTasks();
+      // state.copyWith(taskList: () => _tasks);
 
-      await emit.forEach<List<Task>>(
-        _todosRepositoryImple.streamTodoList,
-        onData: (tasks) => state.copyWith(
-          status: TodoStatus.success,
-          taskList: () {
-            return tasks;
-          },
-        ),
-        onError: (e, r) => emit(
-          state.copyWith(
-            status: TodoStatus.error,
-            errorMessage: e.toString(),
-          ),
-        ),
-      );
+      // await emit.forEach<List<Task>>(
+      //   _todosRepositoryImple.streamTodoList,
+      //   onData: (tasks) => state.copyWith(
+      //     status: TodoStatus.success,
+      //     taskList: () {
+      //       return tasks;
+      //     },
+      //   ),
+      //   onError: (e, r) => emit(
+      //     state.copyWith(
+      //       status: TodoStatus.error,
+      //       errorMessage: e.toString(),
+      //     ),
+      //   ),
+      // );
     } catch (e) {
       emit(
         state.copyWith(
