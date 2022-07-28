@@ -1,7 +1,7 @@
 import 'package:block_todos/core/models/task_model.dart';
 
-abstract class TodosRepository {
-  const TodosRepository();
+abstract class TodosInterface {
+  const TodosInterface();
 
   /// Returns  the list of Tasks as a Stream List
   Stream<List<Task>> get streamTodoList;

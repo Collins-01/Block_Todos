@@ -6,7 +6,7 @@ class AppLogger {
     _logger.setLevel(
       Level.FINEST,
       stackTraceLevel: Level.INFO,
-      includeCallerInfo: true,
+      includeCallerInfo: false,
     );
     _logger.info(message);
   }

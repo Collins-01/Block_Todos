@@ -3,7 +3,8 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:block_todos/app.dart';
-import 'package:block_todos/core/locator.dart';
+
+// import 'package:block_todos/core/locator.dart';
 import 'package:flutter/material.dart';
 
 void bootstrap() {
@@ -13,6 +14,7 @@ void bootstrap() {
 
   runZonedGuarded(
     () async {
+      // final todosRepositoryImple = TodosRepositoryImple();
       await BlocOverrides.runZoned(
         () async => runApp(
           const App(),

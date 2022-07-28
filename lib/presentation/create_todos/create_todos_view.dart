@@ -1,19 +1,10 @@
-// import 'package:block_todos/app.dart';
-import 'package:block_todos/core/locator.dart';
+import 'package:block_todos/core/domain_layer/repositories/repositories.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_bloc.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_events.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_state.dart';
-// import 'package:block_todos/utils/app_logger.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/data_layer/todos_repository_impl.dart';
 import 'components/components.dart';
-
-// final _todoRepositoryInstance = locator<TodosRepositoryImple>();
-final _todoRepositoryInstance = TodosRepositoryImple();
 
 class CreateTodoPage extends StatelessWidget {
   const CreateTodoPage({Key? key}) : super(key: key);
@@ -25,8 +16,8 @@ class CreateTodoPage extends StatelessWidget {
         context,
       ) =>
           CreateTodosBloc(
-        todosRepositoryImple: _todoRepositoryInstance,
-      ),
+        todosRepositoryImple: context.read<TodosRepository>(),
+      )..add(const FetchAllTaskEvent()),
       child: const CreateTodosView(),
     );
   }
@@ -41,13 +32,6 @@ class CreateTodosView extends StatefulWidget {
 
 class _CreateTodosViewState extends State<CreateTodosView> {
   final taskController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    final _createTodosBloc =
-        CreateTodosBloc(todosRepositoryImple: _todoRepositoryInstance);
-    _createTodosBloc.add(const FetchAllTaskEvent());
-  }
 
   @override
   Widget build(BuildContext context) {

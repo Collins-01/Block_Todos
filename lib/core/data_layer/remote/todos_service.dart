@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:block_todos/core/core_constants.dart';
+import 'package:block_todos/core/interface/todo_interface.dart';
 import 'package:block_todos/core/models/task_model.dart';
-import 'package:block_todos/core/repositories/todos_repository.dart';
 import 'package:block_todos/utils/app_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,7 +9,7 @@ import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/io.dart';
 
-class TodosRepositoryImple extends TodosRepository {
+class TodosService extends TodosInterface {
   //================= Variables =================
   Web3Client? _web3client;
   final List<Task> _todosList = [];
@@ -93,6 +93,7 @@ class TodosRepositoryImple extends TodosRepository {
           prevTodos.add(task);
           _streamController.add(prevTodos);
           _todosList.add(task);
+          print("Tasks from Contract: ${_streamController.value}");
         }
       }
     }
