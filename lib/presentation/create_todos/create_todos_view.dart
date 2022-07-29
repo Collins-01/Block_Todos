@@ -1,9 +1,11 @@
 import 'package:block_todos/core/domain_layer/repositories/repositories.dart';
+import 'package:block_todos/core/models/task_model.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_bloc.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_events.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'components/build_task_widget.dart';
 import 'components/components.dart';
 
 class CreateTodoPage extends StatelessWidget {
@@ -17,7 +19,7 @@ class CreateTodoPage extends StatelessWidget {
       ) =>
           CreateTodosBloc(
         todosRepositoryImple: context.read<TodosRepository>(),
-      )..add(const FetchAllTaskEvent()),
+      ),
       child: const CreateTodosView(),
     );
   }
@@ -58,37 +60,55 @@ class _CreateTodosViewState extends State<CreateTodosView> {
         ],
         child: Column(
           children: [
+            // Body that contains Tasks
             BlocBuilder<CreateTodosBloc, CreateTodoState>(
-                builder: (context, state) {
-              ///[Loading, Error, Empty List, Non-Empty List]
-              if (state.status.isLoading) {
-                return const BuildLoadingTodos();
-              }
-              if (state.status.isError) {
-                return BuildErrorLoadingTodos(
-                  message: state.errorMessage,
-                );
-              }
-              if (state.status.isIdle) {
-                //Check for Emptiness
-                if (state.taskList.isNotEmpty) {
-                  return Expanded(
-                    flex: 4,
-                    child: ListView.separated(
-                      itemBuilder: (_, index) => Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(state.taskList[index].taskName),
-                      ),
-                      separatorBuilder: (context, index) => const Divider(),
-                      itemCount: state.taskList.length,
-                    ),
-                  );
-                }
-                return const BuildEmptyTodos();
-              }
+              buildWhen: (previous, current) =>
+                  previous.status != current.status,
+              builder: (context, state) {
+                return Expanded(
+                  flex: 4,
+                  child: StreamBuilder(
+                    stream: context.read<CreateTodosBloc>().tasks,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final data = snapshot.data as List<Task>;
 
-              return const BuildEmptyTodos();
-            }),
+                        if (data.isNotEmpty) {
+                          return ListView.separated(
+                            itemBuilder: (_, index) {
+                              return BuildTaskWidget(
+                                task: data[index],
+                              );
+                            },
+                            separatorBuilder: (__, index) => const Divider(),
+                            itemCount: data.length,
+                          );
+                          // return Center(
+                          //   child: Text(
+                          //     data.toString(),
+                          //   ),
+                          // );
+                        }
+                        return const Center(child: BuildEmptyTodos());
+                        // :
+
+                      }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      }
+                      if (!snapshot.hasData) {
+                        return const Text("!snapshot.hasData");
+                      }
+                      return Center(
+                        child: Text(snapshot.connectionState.toString()),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
             Expanded(
               flex: 1,
               child: Row(
@@ -115,15 +135,16 @@ class _CreateTodosViewState extends State<CreateTodosView> {
                           context.read<CreateTodosBloc>().add(
                                 CreateTaskTodoEvent(taskController.text),
                               );
+                          taskController.clear();
+                        } else {
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(
+                              const SnackBar(
+                                content: Text("Task can not be empty!!"),
+                              ),
+                            );
                         }
-
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            const SnackBar(
-                              content: Text("Task can not be empty!!"),
-                            ),
-                          );
                       },
                       child: BlocBuilder<CreateTodosBloc, CreateTodoState>(
                         builder: (context, state) {

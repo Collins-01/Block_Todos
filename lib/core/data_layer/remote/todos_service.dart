@@ -110,14 +110,18 @@ class TodosService extends TodosInterface {
   Future<void> createTask(String task, [bool isCompleted = false]) async {
     try {
       //
-      await _web3client?.sendTransaction(
-        _credentials,
-        Transaction.callContract(
-          contract: _contract!,
-          function: _createTask!,
-          parameters: [task],
-        ),
-      );
+      final list = [..._streamController.value];
+      final item = Task(taskName: task, isCompleted: isCompleted);
+      list.add(item);
+      _streamController.add(list);
+      // await _web3client?.sendTransaction(
+      //   _credentials,
+      //   Transaction.callContract(
+      //     contract: _contract!,
+      //     function: _createTask!,
+      //     parameters: [task],
+      //   ),
+      // );
     } catch (e) {
       rethrow;
       // print("Error Creating :  $e");
