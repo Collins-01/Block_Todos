@@ -1,5 +1,4 @@
 # Block~Todos
-
 A Blockchain powered Task Manager/Todo List  application that runs on the Ethereum Network.
 
 
