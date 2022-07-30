@@ -48,7 +48,11 @@ class _SplashScreenViewState extends State<_SplashScreenView> {
                 const Spacer(),
                 const Center(child: Text("BLOCK 🧊 - TODOS 🖋 ")),
                 const Spacer(),
-                Text(state.status.name),
+                state.status.isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      )
+                    : const SizedBox.shrink(),
                 const SizedBox(
                   height: 30,
                 )
