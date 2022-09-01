@@ -8,6 +8,7 @@ contract BlockTodos{
     struct Task { 
         string taskName;
         bool isCompleted;
+        
     }
     /// Like a Map type Variable in [Dart], or a dictionary type variable in [Swift]
     /// or a json type variable in [JavaScript]

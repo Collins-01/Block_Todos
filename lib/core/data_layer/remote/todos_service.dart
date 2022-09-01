@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:block_todos/core/core_constants.dart';
 import 'package:block_todos/core/interface/todo_interface.dart';
 import 'package:block_todos/core/models/task_model.dart';
@@ -32,15 +33,18 @@ class TodosService extends TodosInterface {
   @override
   Future<void> initiateSetUp() async {
     try {
+      //* Connect to the ETH Network
       _web3client =
           Web3Client(CoreConstants.rpcURL, Client(), socketConnector: () {
         return IOWebSocketChannel.connect(CoreConstants.wsURL).cast<String>();
       });
+      //* Get ABIs
       await _getAbi();
       await _getCredentials();
       await _getDeployedContarct();
     } catch (e) {
-      print("Error Initialising :::: $e");
+      rethrow;
+      // print("Error Initialising :::: $e");
       // rethrow;
     }
   }
@@ -110,19 +114,20 @@ class TodosService extends TodosInterface {
   Future<void> createTask(String task, [bool isCompleted = false]) async {
     try {
       //
-      final list = [..._streamController.value];
-      final item = Task(taskName: task, isCompleted: isCompleted);
-      list.add(item);
-      _streamController.add(list);
-      // await _web3client?.sendTransaction(
-      //   _credentials,
-      //   Transaction.callContract(
-      //     contract: _contract!,
-      //     function: _createTask!,
-      //     parameters: [task],
-      //   ),
-      // );
+      // final list = [..._streamController.value];
+      // final item = Task(taskName: task, isCompleted: isCompleted);
+      // // list.add(item);
+      // _streamController.add(list);
+      await _web3client?.sendTransaction(
+        _credentials,
+        Transaction.callContract(
+          contract: _contract!,
+          function: _createTask!,
+          parameters: [task],
+        ),
+      );
     } catch (e) {
+      log(e.toString());
       rethrow;
       // print("Error Creating :  $e");
       // throw Exception();
