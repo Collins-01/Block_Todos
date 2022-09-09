@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../extensions/extensions.dart';
 
 class BuildTaskWidget extends StatelessWidget {
-  final Task task;
+  final Todo task;
   final Function(bool? value)? toggleTask;
   const BuildTaskWidget({Key? key, required this.task, this.toggleTask})
       : super(key: key);
@@ -24,12 +24,12 @@ class BuildTaskWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  task.taskName,
+                  task.title,
                 ),
               ),
               const Spacer(),
               Checkbox(
-                value: task.isCompleted,
+                value: task.status,
                 onChanged: toggleTask,
               )
             ],

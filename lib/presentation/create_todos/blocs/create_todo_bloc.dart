@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:block_todos/core/domain/todos_repository.dart';
 import 'package:block_todos/core/models/task_model.dart';
+import 'package:block_todos/core/models/todo_model.dart';
 import 'package:block_todos/presentation/create_todos/blocs/blocs.dart';
-import '../../../core/domain_layer/repositories/repositories.dart';
 
 class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
   final TodosRepository _todosRepositoryImple;
@@ -32,8 +33,8 @@ class CreateTodosBloc extends Bloc<CreateTodoEvent, CreateTodoState> {
     }
   }
 
-  Stream<List<Task>> get tasks => _tasks;
-  Stream<List<Task>> get _tasks => _todosRepositoryImple.streamTodoList;
+  Stream<List<Todo>> get tasks => _tasks;
+  Stream<List<Todo>> get _tasks => _todosRepositoryImple.streamTodoList;
   //Toggles the Status of a task
   Future<void> toggleTaskStatus(
       ToggleCompletedTodoEvent event, Emitter emit) async {

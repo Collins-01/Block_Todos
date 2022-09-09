@@ -1,13 +1,14 @@
 import 'package:block_todos/core/models/task_model.dart';
+import 'package:block_todos/core/models/todo_model.dart';
 
 abstract class TodosInterface {
   const TodosInterface();
 
   /// Returns  the list of Tasks as a Stream List
-  Stream<List<Task>> get streamTodoList;
+  Stream<List<Todo>> get streamTodoList;
 
   /// Returns the List of Tasks
-  List<Task> get taskList;
+  List<Todo> get taskList;
 
   /// Create a Task on the Blockchain takes in [taskName: String]
   Future<void> createTask(String task, [bool isCompleted = false]);

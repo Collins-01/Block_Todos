@@ -1,4 +1,4 @@
-import 'package:block_todos/core/models/task_model.dart';
+import 'package:block_todos/core/models/todo_model.dart';
 import 'package:equatable/equatable.dart';
 
 enum TodoStatus {
@@ -26,8 +26,8 @@ extension XTodoStatus on TodoStatus {
 class CreateTodoState extends Equatable {
   final TodoStatus status;
   final String errorMessage;
-  final List<Task> taskList;
-  final Stream<List<Task>> streamtaskList;
+  final List<Todo> taskList;
+  final Stream<List<Todo>> streamtaskList;
   const CreateTodoState({
     this.status = TodoStatus.idle,
     this.errorMessage = '',
@@ -42,8 +42,8 @@ class CreateTodoState extends Equatable {
   CreateTodoState copyWith(
       {TodoStatus? status,
       String? errorMessage,
-      List<Task> Function()? taskList,
-      Stream<List<Task>> Function()? streamtaskList}) {
+      List<Todo> Function()? taskList,
+      Stream<List<Todo>> Function()? streamtaskList}) {
     return CreateTodoState(
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,

@@ -1,6 +1,8 @@
-import 'package:block_todos/core/data_layer/data_layer.dart';
 import 'package:block_todos/core/interface/todo_interface.dart';
 import 'package:block_todos/core/models/task_model.dart';
+import 'package:block_todos/core/models/todo_model.dart';
+
+import '../data/todos_service.dart';
 
 class TodosRepository extends TodosInterface {
   final TodosService _todosService;
@@ -22,10 +24,10 @@ class TodosRepository extends TodosInterface {
   }
 
   @override
-  Stream<List<Task>> get streamTodoList => _todosService.streamTodoList;
+  Stream<List<Todo>> get streamTodoList => _todosService.streamTodoList;
 
   @override
-  List<Task> get taskList => _todosService.taskList;
+  List<Todo> get taskList => _todosService.taskList;
 
   @override
   Future<void> toggleTodo(int index, bool isComplete) async {

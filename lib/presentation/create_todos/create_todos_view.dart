@@ -1,5 +1,6 @@
-import 'package:block_todos/core/domain_layer/repositories/repositories.dart';
+import 'package:block_todos/core/domain/todos_repository.dart';
 import 'package:block_todos/core/models/task_model.dart';
+import 'package:block_todos/core/models/todo_model.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_bloc.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_events.dart';
 import 'package:block_todos/presentation/create_todos/blocs/create_todo_state.dart';
@@ -71,7 +72,7 @@ class _CreateTodosViewState extends State<CreateTodosView> {
                     stream: context.read<CreateTodosBloc>().tasks,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        final data = snapshot.data as List<Task>;
+                        final data = snapshot.data as List<Todo>;
 
                         if (data.isNotEmpty) {
                           return ListView.separated(

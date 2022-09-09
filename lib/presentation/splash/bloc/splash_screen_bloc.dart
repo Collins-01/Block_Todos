@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:block_todos/core/domain_layer/domain_layer.dart';
+import 'package:block_todos/core/domain/todos_repository.dart';
 import 'package:block_todos/presentation/splash/bloc/bloc.dart';
-// import 'package:block_todos/presentation/splash/bloc/splash_screen_events.dart';
 import 'package:block_todos/utils/app_logger.dart';
 
 class SplashScreenBloc extends Cubit<SplashScreenState> {

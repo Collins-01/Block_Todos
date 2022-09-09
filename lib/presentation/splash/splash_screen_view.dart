@@ -1,11 +1,10 @@
 import 'dart:developer';
 
+import 'package:block_todos/core/domain/todos_repository.dart';
 import 'package:block_todos/presentation/create_todos/create_todos_view.dart';
 import 'package:block_todos/presentation/splash/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../core/domain_layer/repositories/repositories.dart';
 
 class SplashScreenPage extends StatelessWidget {
   const SplashScreenPage({Key? key}) : super(key: key);
